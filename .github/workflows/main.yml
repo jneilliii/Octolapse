@@ -1,4 +1,4 @@
-name: Create Plugin ZIP
+name: Build with Versioneer
 on:
   push:
     tags:
@@ -8,13 +8,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out Repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Erstelle ZIP-Archiv
-        run: zip -r master.zip Octolapse/builds
-
-      - name: Release mit ZIP-Datei
-        uses: softprops/action-gh-release@v1
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          files: master.zip
+          python-version: '3.x'  # Specify your desired Python version
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install versioneer
+          pip install -e .  # Install your project in editable mode
+
+      - name: Create Versioneer build
+        run: |
+          python setup.py sdist bdist_wheel  # This will create the distributable packages with the Versioneer-generated version
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-package-distributables
+          path: dist/
+
