@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - master  # Change to 'master' if your branch is named master
+    tags:
+      - 'v*'  # Wird ausgeführt, wenn du ein neues Tag wie "v1.0" erstellst
 
 jobs:
   build:
